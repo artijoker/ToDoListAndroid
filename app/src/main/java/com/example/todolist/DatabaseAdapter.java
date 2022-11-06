@@ -72,11 +72,11 @@ public class DatabaseAdapter {
     }
 
     private Cursor getCursorAllWorkerTags() {
-        return database.query(DatabaseHelper.TABLE_TASKS, columnsTableWorkerTags, null, null, null, null, null);
+        return database.query(DatabaseHelper.TABLE_WORKER_TAGS, columnsTableWorkerTags, null, null, null, null, null);
     }
 
     private Cursor getCursorAllTaskLists() {
-        return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTaskLists, null, null, null, null, null);
+        return database.query(DatabaseHelper.TABLE_TASK_LISTS, columnsTableTaskLists, null, null, null, null, null);
     }
 
     private Task cursorToTask(Cursor cursor) {
@@ -135,7 +135,6 @@ public class DatabaseAdapter {
 
         int id = cursor.getInt(indexColumnId);
         String name = cursor.getString(indexColumnName);
-
         return new TaskList(id, name);
     }
 

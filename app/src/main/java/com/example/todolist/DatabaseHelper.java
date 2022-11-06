@@ -43,27 +43,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + TABLE_WORKER_TAGS + " ("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_TAG + " TEXT"
+                        + COLUMN_TAG + " TEXT  NOT NULL"
                         + ");"
         );
 
         db.execSQL(
                 "CREATE TABLE " + TABLE_TASK_LISTS + " ("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_NAME + " TEXT"
+                        + COLUMN_NAME + " TEXT  NOT NULL"
                         + ");"
         );
 
         db.execSQL(
                 "CREATE TABLE " + TABLE_TASKS + " ("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_TITLE + " TEXT, "
-                        + COLUMN_TEXT + " TEXT, "
-                        + COLUMN_END_DATE + " TEXT, "
-                        + COLUMN_IS_COMPLETED + " TEXT, "
-                        + COLUMN_IS_TAGGED + " TEXT, "
-                        + COLUMN_IS_NOTIFY_END + " TEXT, "
-                        + COLUMN_LIST_ID + " INTEGER "
+                        + COLUMN_TITLE + " TEXT  NOT NULL, "
+                        + COLUMN_TEXT + " TEXT  NOT NULL, "
+                        + COLUMN_END_DATE + " TEXT  NOT NULL, "
+                        + COLUMN_IS_COMPLETED + " TEXT  NOT NULL, "
+                        + COLUMN_IS_TAGGED + " TEXT  NOT NULL, "
+                        + COLUMN_IS_NOTIFY_END + " TEXT  NOT NULL, "
+                        + COLUMN_LIST_ID + " INTEGER NOT NULL,"
+                        + " FOREIGN KEY (" + COLUMN_LIST_ID + ") " +
+                        "REFERENCES " +  TABLE_TASK_LISTS + " (" + COLUMN_LIST_ID + " ) ON UPDATE CASCADE ON DELETE CASCADE"
                         + ");"
         );
 
@@ -72,10 +74,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NAME + ") " + "VALUES ('Мои задачи');"
         );
 
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
 }

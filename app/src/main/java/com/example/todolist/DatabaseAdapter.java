@@ -26,7 +26,6 @@ public class DatabaseAdapter {
             DatabaseHelper.COLUMN_TEXT,
             DatabaseHelper.COLUMN_END_DATE,
             DatabaseHelper.COLUMN_IS_COMPLETED,
-            DatabaseHelper.COLUMN_IS_TAGGED,
             DatabaseHelper.COLUMN_IS_NOTIFY_END,
             DatabaseHelper.COLUMN_LIST_ID
     };
@@ -45,29 +44,25 @@ public class DatabaseAdapter {
     }
 
     private Cursor getCursorCompletedTasksByListId(long listId) {
-        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = true and "
+        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = 'true' and "
                 + DatabaseHelper.COLUMN_LIST_ID + " = " + listId;
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
     private Cursor getCursorNotCompletedTasksByListId(long listId) {
-        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = false and "
+        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = 'false' and "
                 + DatabaseHelper.COLUMN_LIST_ID + " = " + listId;
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
     private Cursor getCursorCompletedTasks() {
-        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = true";
+        String selection = DatabaseHelper.COLUMN_IS_COMPLETED + " = 'true'";
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
-    private Cursor getCursorTaggedTasks() {
-        String selection = DatabaseHelper.COLUMN_IS_TAGGED + " = true";
-        return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
-    }
 
     private Cursor getCursorTasksWithNotifyEnd() {
-        String selection = DatabaseHelper.COLUMN_IS_NOTIFY_END + " = true";
+        String selection = DatabaseHelper.COLUMN_IS_NOTIFY_END + " = 'true'";
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
@@ -85,7 +80,6 @@ public class DatabaseAdapter {
         int indexColumnText = cursor.getColumnIndex(DatabaseHelper.COLUMN_TEXT);
         int indexColumnEndDate = cursor.getColumnIndex(DatabaseHelper.COLUMN_END_DATE);
         int indexColumnIsCompleted = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_COMPLETED);
-        int indexColumnIsTagged = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_TAGGED);
         int indexColumnIsNotifyEnd = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_NOTIFY_END);
         int indexColumnListId = cursor.getColumnIndex(DatabaseHelper.COLUMN_LIST_ID);
 
@@ -95,10 +89,9 @@ public class DatabaseAdapter {
         String text = cursor.getString(indexColumnText);
         LocalDate endDate = LocalDate.parse(cursor.getString(indexColumnEndDate));
         boolean isCompleted = Boolean.parseBoolean(cursor.getString(indexColumnIsCompleted));
-        boolean isTagged = Boolean.parseBoolean(cursor.getString(indexColumnIsTagged));
         boolean isNotifyEnd = Boolean.parseBoolean(cursor.getString(indexColumnIsNotifyEnd));
 
-        return new Task(id, listId, title, text, endDate, isCompleted, isTagged, isNotifyEnd);
+        return new Task(id, listId, title, text, endDate, isCompleted, isNotifyEnd);
     }
 
     private ContentValues taskToContentValues(Task task) {
@@ -107,7 +100,6 @@ public class DatabaseAdapter {
         values.put(DatabaseHelper.COLUMN_TEXT, task.getText());
         values.put(DatabaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
         values.put(DatabaseHelper.COLUMN_IS_COMPLETED, Boolean.toString(task.isCompleted()));
-        values.put(DatabaseHelper.COLUMN_IS_TAGGED, Boolean.toString(task.isTagged()));
         values.put(DatabaseHelper.COLUMN_IS_NOTIFY_END, Boolean.toString(task.isNotifyEnd()));
         values.put(DatabaseHelper.COLUMN_LIST_ID, Long.toString(task.getListId()));
         return values;
@@ -191,16 +183,6 @@ public class DatabaseAdapter {
     public List<Task> getCompletedTasksByListId(long listId) {
         ArrayList<Task> tasks = new ArrayList<>();
         Cursor cursor = getCursorCompletedTasksByListId(listId);
-        while (cursor.moveToNext()) {
-            tasks.add(cursorToTask(cursor));
-        }
-        cursor.close();
-        return tasks;
-    }
-
-    public List<Task> getTaggedTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
-        Cursor cursor = getCursorTaggedTasks();
         while (cursor.moveToNext()) {
             tasks.add(cursorToTask(cursor));
         }

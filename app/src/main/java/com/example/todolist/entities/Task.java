@@ -9,17 +9,15 @@ public class Task {
     private final String text;
     private final LocalDate endDate;
     private final boolean isCompleted;
-    private final boolean isTagged;
     private final boolean isNotifyEnd;
 
-    public Task(long id, long listId, String title, String text, LocalDate endDate, boolean isCompleted, boolean isTagged, boolean isNotifyEnd) {
+    public Task(long id, long listId, String title, String text, LocalDate endDate, boolean isCompleted, boolean isNotifyEnd) {
         this.id = id;
         this.listId = listId;
         this.title = title;
         this.text = text;
         this.endDate = endDate;
         this.isCompleted = isCompleted;
-        this.isTagged = isTagged;
         this.isNotifyEnd = isNotifyEnd;
     }
 
@@ -30,7 +28,6 @@ public class Task {
         this.text = text;
         this.endDate = endDate;
         this.isCompleted = isCompleted;
-        this.isTagged = isTagged;
         this.isNotifyEnd = isNotifyEnd;
     }
 
@@ -54,9 +51,6 @@ public class Task {
         return isCompleted;
     }
 
-    public boolean isTagged() {
-        return isTagged;
-    }
 
     public boolean isNotifyEnd() {
         return isNotifyEnd;

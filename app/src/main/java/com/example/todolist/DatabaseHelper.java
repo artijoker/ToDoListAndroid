@@ -26,7 +26,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_END_DATE = "endDate";
     public static final String COLUMN_IS_COMPLETED = "isCompleted";
-    public static final String COLUMN_IS_TAGGED = "isTagged";
     public static final String COLUMN_IS_NOTIFY_END = "isNotifyEnd";
     public static final String COLUMN_LIST_ID = "listId";
 
@@ -61,7 +60,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         + COLUMN_TEXT + " TEXT  NOT NULL, "
                         + COLUMN_END_DATE + " TEXT  NOT NULL, "
                         + COLUMN_IS_COMPLETED + " TEXT  NOT NULL, "
-                        + COLUMN_IS_TAGGED + " TEXT  NOT NULL, "
                         + COLUMN_IS_NOTIFY_END + " TEXT  NOT NULL, "
                         + COLUMN_LIST_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + COLUMN_LIST_ID + ") " +

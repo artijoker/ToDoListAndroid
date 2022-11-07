@@ -37,26 +37,24 @@ public class TasksFragment extends Fragment {
 
     }
 
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        context = getActivity();
-//        View view = inflater.inflate(R.layout.tasks_fragment_page, container, false);
-//        TextView title = view.findViewById(R.id.title);
-//        title.setText(taskList.getName());
-//        listView = (ListView) view.findViewById(R.id.taskList);
-//        adapter = new ArrayAdapter<>(view.getContext(), android.R.layout.simple_list_item_1, tasks);
-//        return view;
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
-//        dbAdapter.open();
-//
-//        tasks.addAll(dbAdapter.getTasksByListId(taskList.getId()));
-//        dbAdapter.close();
-//    }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context = getActivity();
+        View view = inflater.inflate(R.layout.tasks_fragment_page, container, false);
+        listView = (ListView) view.findViewById(R.id.taskList);
+        adapter = new ArrayAdapter<>(view.getContext(), android.R.layout.simple_list_item_1, tasks);
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
+        dbAdapter.open();
+
+        tasks.addAll(dbAdapter.getTasksByListId(taskList.getId()));
+        dbAdapter.close();
+    }
 }

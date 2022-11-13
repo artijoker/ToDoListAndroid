@@ -11,19 +11,83 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:tabMode="scrollable"
-            android:layout_gravity="center"/>
-
-
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/pager"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="50dp"
+            android:background="#1A237E">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_margin="10dp"
+                        android:padding="35dp"
+                        android:stateListAnimator="@null"
+                        app:backgroundTint="#1A237E"
+                        app:icon="@drawable/star"
+                        app:iconSize="35dp"
+                        app:iconTint="@color/white" />
+
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:onClick="addList"
+                        android:padding="35dp"
+                        android:stateListAnimator="@null"
+                        app:backgroundTint="#1A237E"
+                        app:icon="@drawable/add_list"
+                        app:iconSize="35dp"
+                        app:iconTint="@color/white" />
+
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:menu="@menu/main_menu" />
+                </LinearLayout>
+
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout_TaskList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabContentStart="@dimen/cardview_compat_inset_shadow"
+                app:tabMode="scrollable" />
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

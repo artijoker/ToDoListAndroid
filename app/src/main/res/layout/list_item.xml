@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <GridLayout
+        android:id="@+id/gridLayout_task"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:layout_marginBottom="10dp">
+
+        <CheckBox
+            android:id="@+id/checkBox_completed"
+            style="?android:attr/action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_title"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:text="Задача: "
+                android:textSize="18sp" />
+            <LinearLayout
+                android:id="@+id/layout_endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Выполнить до:"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/textView_endDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2022.02.02"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/textView_completed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Выполнено"
+                android:textColor="#1B5E20"
+                android:layout_marginEnd="5dp"
+                android:textSize="16sp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+
+        <CheckBox
+            android:id="@+id/checkBox_tagged"
+            style="?android:attr/starStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" />
+    </GridLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:background="#1A237E"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"/>
+</LinearLayout>

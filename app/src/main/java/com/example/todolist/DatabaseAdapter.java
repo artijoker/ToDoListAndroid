@@ -8,12 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.todolist.entities.Task;
 import com.example.todolist.entities.TaskList;
-import com.example.todolist.entities.WorkerTag;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 public class DatabaseAdapter {
 
@@ -25,14 +25,12 @@ public class DatabaseAdapter {
             DatabaseHelper.COLUMN_TITLE,
             DatabaseHelper.COLUMN_TEXT,
             DatabaseHelper.COLUMN_END_DATE,
+            DatabaseHelper.COLUMN_DATE_WHEN_DONE,
             DatabaseHelper.COLUMN_IS_COMPLETED,
-            DatabaseHelper.COLUMN_IS_NOTIFY_END,
+            DatabaseHelper.COLUMN_IS_TAGGED,
             DatabaseHelper.COLUMN_LIST_ID
     };
-    private final String[] columnsTableWorkerTags = new String[]{
-            DatabaseHelper.COLUMN_ID,
-            DatabaseHelper.COLUMN_TAG
-    };
+
     private final String[] columnsTableTaskLists = new String[]{
             DatabaseHelper.COLUMN_ID,
             DatabaseHelper.COLUMN_NAME
@@ -40,6 +38,11 @@ public class DatabaseAdapter {
 
     private Cursor getCursorTasksByListId(long listId) {
         String selection = DatabaseHelper.COLUMN_LIST_ID + " = " + listId;
+        return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
+    }
+
+    private Cursor getCursorTaggedTasks() {
+        String selection = DatabaseHelper.COLUMN_IS_TAGGED + " = 'true'";
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
@@ -60,16 +63,6 @@ public class DatabaseAdapter {
         return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
     }
 
-
-    private Cursor getCursorTasksWithNotifyEnd() {
-        String selection = DatabaseHelper.COLUMN_IS_NOTIFY_END + " = 'true'";
-        return database.query(DatabaseHelper.TABLE_TASKS, columnsTableTasks, selection, null, null, null, null);
-    }
-
-    private Cursor getCursorAllWorkerTags() {
-        return database.query(DatabaseHelper.TABLE_WORKER_TAGS, columnsTableWorkerTags, null, null, null, null, null);
-    }
-
     private Cursor getCursorAllTaskLists() {
         return database.query(DatabaseHelper.TABLE_TASK_LISTS, columnsTableTaskLists, null, null, null, null, null);
     }
@@ -79,47 +72,57 @@ public class DatabaseAdapter {
         int indexColumnTitle = cursor.getColumnIndex(DatabaseHelper.COLUMN_TITLE);
         int indexColumnText = cursor.getColumnIndex(DatabaseHelper.COLUMN_TEXT);
         int indexColumnEndDate = cursor.getColumnIndex(DatabaseHelper.COLUMN_END_DATE);
+        int indexColumnDateWhenDone = cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE_WHEN_DONE);
         int indexColumnIsCompleted = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_COMPLETED);
-        int indexColumnIsNotifyEnd = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_NOTIFY_END);
+        int indexColumnIsTagged = cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_TAGGED);
         int indexColumnListId = cursor.getColumnIndex(DatabaseHelper.COLUMN_LIST_ID);
 
         int id = cursor.getInt(indexColumnId);
         int listId = cursor.getInt(indexColumnListId);
         String title = cursor.getString(indexColumnTitle);
-        String text = cursor.getString(indexColumnText);
-        LocalDate endDate = LocalDate.parse(cursor.getString(indexColumnEndDate));
-        boolean isCompleted = Boolean.parseBoolean(cursor.getString(indexColumnIsCompleted));
-        boolean isNotifyEnd = Boolean.parseBoolean(cursor.getString(indexColumnIsNotifyEnd));
 
-        return new Task(id, listId, title, text, endDate, isCompleted, isNotifyEnd);
+
+        String possiblyText = cursor.getString(indexColumnText);
+        Optional<String> text = possiblyText != null ? Optional.of(possiblyText) : Optional.empty();
+
+        String possiblyEndDate = cursor.getString(indexColumnEndDate);
+        Optional<LocalDate> endDate = possiblyEndDate != null ?
+                Optional.of(LocalDate.parse(possiblyEndDate)) :
+                Optional.empty();
+
+        String possiblyDateWhenDone = cursor.getString(indexColumnDateWhenDone);
+        Optional<LocalDateTime> dateWhenDone = possiblyDateWhenDone != null ?
+                Optional.of(LocalDateTime.parse(possiblyDateWhenDone)) :
+                Optional.empty();
+
+        boolean isCompleted = Boolean.parseBoolean(cursor.getString(indexColumnIsCompleted));
+        boolean isTagged = Boolean.parseBoolean(cursor.getString(indexColumnIsTagged));
+
+        return new Task(id, listId, title, text, endDate, dateWhenDone,isCompleted, isTagged);
     }
+
 
     private ContentValues taskToContentValues(Task task) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_TITLE, task.getTitle());
-        values.put(DatabaseHelper.COLUMN_TEXT, task.getText());
-        values.put(DatabaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
+
+        if (task.getText().isPresent())
+            values.put(DatabaseHelper.COLUMN_TEXT, task.getText().get());
+
+        if (task.getEndDate().isPresent())
+            values.put(DatabaseHelper.COLUMN_END_DATE, task.getEndDate().get().toString());
+
+        if (task.getDateWhenDone().isPresent())
+            values.put(DatabaseHelper.COLUMN_END_DATE, task.getDateWhenDone().get().toString());
+
         values.put(DatabaseHelper.COLUMN_IS_COMPLETED, Boolean.toString(task.isCompleted()));
-        values.put(DatabaseHelper.COLUMN_IS_NOTIFY_END, Boolean.toString(task.isNotifyEnd()));
+        values.put(DatabaseHelper.COLUMN_IS_TAGGED, Boolean.toString(task.isTagged()));
         values.put(DatabaseHelper.COLUMN_LIST_ID, Long.toString(task.getListId()));
+
         return values;
     }
 
-    private WorkerTag cursorToWorkerTag(Cursor cursor) {
-        int indexColumnId = cursor.getColumnIndex(DatabaseHelper.COLUMN_ID);
-        int indexColumnTag = cursor.getColumnIndex(DatabaseHelper.COLUMN_TAG);
 
-        int id = cursor.getInt(indexColumnId);
-        String tag = cursor.getString(indexColumnTag);
-
-        return new WorkerTag(id, tag);
-    }
-
-    private ContentValues workerTagToContentValues(WorkerTag workerTag) {
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_TAG, workerTag.getTag());
-        return values;
-    }
 
     private TaskList cursorToTaskList(Cursor cursor) {
         int indexColumnId = cursor.getColumnIndex(DatabaseHelper.COLUMN_ID);
@@ -160,15 +163,7 @@ public class DatabaseAdapter {
         return taskLists;
     }
 
-    public List<WorkerTag> getWorkerTags() {
-        ArrayList<WorkerTag> tags = new ArrayList<>();
-        Cursor cursor = getCursorAllWorkerTags();
-        while (cursor.moveToNext()) {
-            tags.add(cursorToWorkerTag(cursor));
-        }
-        cursor.close();
-        return tags;
-    }
+
 
     public List<Task> getTasksByListId(long listId) {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -180,9 +175,9 @@ public class DatabaseAdapter {
         return tasks;
     }
 
-    public List<Task> getCompletedTasksByListId(long listId) {
+    public List<Task> getTaggedTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
-        Cursor cursor = getCursorCompletedTasksByListId(listId);
+        Cursor cursor = getCursorTaggedTasks();
         while (cursor.moveToNext()) {
             tasks.add(cursorToTask(cursor));
         }
@@ -190,10 +185,10 @@ public class DatabaseAdapter {
         return tasks;
     }
 
-    public List<Task> getTasksWithNotifyEnd() {
+    public List<Task> getCompletedTasksByListId(long listId) {
         ArrayList<Task> tasks = new ArrayList<>();
-        Cursor cursor = getCursorTasksWithNotifyEnd();
-        while (getCursorTasksWithNotifyEnd().moveToNext()) {
+        Cursor cursor = getCursorCompletedTasksByListId(listId);
+        while (cursor.moveToNext()) {
             tasks.add(cursorToTask(cursor));
         }
         cursor.close();
@@ -296,29 +291,4 @@ public class DatabaseAdapter {
         String[] whereArgs = new String[]{String.valueOf(taskListId)};
         return database.delete(DatabaseHelper.TABLE_TASK_LISTS, whereClause, whereArgs);
     }
-
-    public long addWorkerTag(WorkerTag workerTag) {
-        return database.insert(DatabaseHelper.TABLE_WORKER_TAGS,
-                null,
-                workerTagToContentValues(workerTag)
-        );
-    }
-
-    public long updateWorkerTag(WorkerTag workerTag) {
-
-        String whereClause = DatabaseHelper.COLUMN_ID + "=" + workerTag.getId();
-        return database.update(DatabaseHelper.TABLE_WORKER_TAGS,
-                workerTagToContentValues(workerTag),
-                whereClause,
-                null
-        );
-    }
-
-    public long deleteWorkerTag(long workerTagId) {
-
-        String whereClause = "_id = ?";
-        String[] whereArgs = new String[]{String.valueOf(workerTagId)};
-        return database.delete(DatabaseHelper.TABLE_WORKER_TAGS, whereClause, whereArgs);
-    }
-
 }

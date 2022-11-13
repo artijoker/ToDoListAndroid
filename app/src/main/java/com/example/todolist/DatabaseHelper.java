@@ -9,14 +9,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1;
 
     static final String TABLE_TASKS = "tasks";
-    static final String TABLE_WORKER_TAGS = "workerTasks";
     static final String TABLE_TASK_LISTS = "taskLists";
 
 
     public static final String COLUMN_ID = "_id";
 
-    //workerTasks
-    public static final String COLUMN_TAG = "tag";
 
     //taskLists
     public static final String COLUMN_NAME = "name";
@@ -25,11 +22,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_END_DATE = "endDate";
+    public static final String COLUMN_DATE_WHEN_DONE = "dateWhenDone";
     public static final String COLUMN_IS_COMPLETED = "isCompleted";
-    public static final String COLUMN_IS_NOTIFY_END = "isNotifyEnd";
+    public static final String COLUMN_IS_TAGGED = "isTagged";
     public static final String COLUMN_LIST_ID = "listId";
-
-
 
 
     public DatabaseHelper(Context context) {
@@ -39,12 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL(
-                "CREATE TABLE " + TABLE_WORKER_TAGS + " ("
-                        + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_TAG + " TEXT  NOT NULL"
-                        + ");"
-        );
 
         db.execSQL(
                 "CREATE TABLE " + TABLE_TASK_LISTS + " ("
@@ -56,14 +46,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + TABLE_TASKS + " ("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_TITLE + " TEXT  NOT NULL, "
-                        + COLUMN_TEXT + " TEXT  NOT NULL, "
-                        + COLUMN_END_DATE + " TEXT  NOT NULL, "
-                        + COLUMN_IS_COMPLETED + " TEXT  NOT NULL, "
-                        + COLUMN_IS_NOTIFY_END + " TEXT  NOT NULL, "
+                        + COLUMN_TITLE + " TEXT NOT NULL, "
+                        + COLUMN_TEXT + " TEXT, "
+                        + COLUMN_END_DATE + " TEXT, "
+                        + COLUMN_DATE_WHEN_DONE + " TEXT, "
+                        + COLUMN_IS_COMPLETED + " TEXT NOT NULL, "
+                        + COLUMN_IS_TAGGED + " TEXT NOT NULL,  "
                         + COLUMN_LIST_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + COLUMN_LIST_ID + ") " +
-                        "REFERENCES " +  TABLE_TASK_LISTS + " (" + COLUMN_LIST_ID + " ) ON UPDATE CASCADE ON DELETE CASCADE"
+                        "REFERENCES " + TABLE_TASK_LISTS + " (" + COLUMN_LIST_ID + " ) ON UPDATE CASCADE ON DELETE CASCADE"
                         + ");"
         );
 
@@ -71,7 +62,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_TASK_LISTS + " ("
                 + COLUMN_NAME + ") " + "VALUES ('Мои задачи');"
         );
-
 
     }
 

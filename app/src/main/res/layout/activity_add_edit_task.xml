@@ -13,77 +13,163 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/teal_700">
+            android:layout_height="50dp"
+            android:background="#1A237E">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <Button
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_margin="12dp"
-                    app:icon="@drawable/back" />
-
-                <Button
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="8dp"
+                    android:stateListAnimator="@null"
+                    app:backgroundTint="#1A237E"
+                    app:icon="@drawable/back"
+                    app:iconSize="35dp"
+                    app:iconTint="@color/white" />
+                <TextView
+                    android:id="@+id/textView_listName"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="65dp"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:singleLine="true"
+                    android:text="Мой списокgfdfdfgfdgfdgfdgfdgde rsbnrytnryurtubtryvrtybnunt7yurtnntrbtuntynnyuntrut"/>
+                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/button_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_margin="12dp"
-                    app:icon="@drawable/delete" />
+                    android:layout_gravity="end|center"
+                    android:layout_marginRight="8dp"
+                    android:stateListAnimator="@null"
+                    app:backgroundTint="#1A237E"
+                    app:icon="@drawable/delete"
+                    app:iconSize="35dp"
+                    app:iconTint="@color/white" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+
+        <GridLayout
+            android:id="@+id/gridLayout_statusTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Задача"
+            android:columnCount="2"
             android:layout_margin="10dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+            <CheckBox
+                android:id="@+id/checkBox_completed"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Задача выполнена"
+                android:textSize="18sp"
+                android:layout_gravity="start"/>
 
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+            <CheckBox
+                android:id="@+id/checkBox_tagged"
+                style="?android:attr/starStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp" />
+        </GridLayout>
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/filledTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Дополнительный текст"
-            android:layout_margin="10dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-        <DatePicker
-            android:id="@+id/datePicker"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:calendarViewShown="false"
-            android:datePickerMode="spinner"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
+            android:hint="Задача">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText_taskTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="false"
             android:layout_margin="10dp"
-            android:text="Напоминать"/>
+            android:hint="Дополнительная информация">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText_taskText"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Выполнить до:"
+                android:textSize="18dp" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/button_addEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                android:text="Добавить дату"
+                android:textColor="@color/white"
+                app:backgroundTint="#1A237E"
+                app:icon="@drawable/calendar"
+                app:iconSize="25dp"
+                app:iconTint="@color/white"
+                android:visibility="visible"
+                android:onClick="addEndDate"/>
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/button_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                android:textAlignment="center"
+                android:text="20.02.2022"
+                android:textColor="@color/white"
+                app:backgroundTint="#004D40"
+                android:visibility="gone"
+                android:onClick="changeDate"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_deleteDate"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:icon="@drawable/close"
+                app:iconSize="30dp"
+                app:iconTint="#B71C1C"
+                android:visibility="gone"
+                android:onClick="deleteDate"/>
+        </LinearLayout>
+
 
         <Button
+            android:id="@+id/button_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:text="Сохранить"
+            android:textColor="@color/white"
+            app:backgroundTint="#1A237E"
             app:icon="@drawable/done"
-            />
+            app:iconTint="@color/white" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

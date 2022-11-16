@@ -1,5 +1,6 @@
 package com.example.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -11,7 +12,6 @@ import android.util.Pair;
 import android.view.View;
 
 import com.example.todolist.entities.TaskList;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -19,14 +19,17 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class MainActivity extends AppCompatActivity {
+    private final static String KEY_CURRENT_TAB_POSITION = "keyTabPosition";
+    private final static String KEY_COUNT_PAGES = "keyCountPages";
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
+    private int tabPosition = 0;
+    private int currentCountPages = 0;
     private ViewPager2 pager;
     private TabLayout tabLayout;
 
@@ -73,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                         tabLayout.getTabAt(tabLayout.getSelectedTabPosition())
                 ).getTag();
                 assert list != null;
-
                 if (list.getId() == 1) {
                     new MaterialAlertDialogBuilder(MainActivity.this)
                             .setTitle("Ошибка!")
@@ -99,21 +101,37 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             }
+//            else if (id == R.id.sortToAbc) {
+//                return true;
+//            }
             return false;
+        });
+
+        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                tabPosition = position;
+            }
         });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         updateViewPager();
     }
 
     private List<Pair<Fragment, TaskList>> createFragments(List<TaskList> lists) {
+
         List<Pair<Fragment, TaskList>> fragments = new ArrayList<>();
         for (TaskList list : lists) {
-            fragments.add(new Pair<>(new TasksFragment(list), list));
+
+            Bundle args = new Bundle();
+            args.putParcelable("taskList", list);
+            TasksFragment fragment = new TasksFragment();
+            fragment.setArguments(args);
+            fragments.add(new Pair<>(fragment, list));
         }
         return fragments;
     }
@@ -122,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
         dbAdapter.open();
         List<Pair<Fragment, TaskList>> fragments = createFragments(dbAdapter.getTaskLists());
         dbAdapter.close();
-
 
         FragmentStateAdapter adapter = new FragmentAdapter(
                 this,
@@ -137,11 +154,43 @@ public class MainActivity extends AppCompatActivity {
                     tab.setTag(fragments.get(position).second);
                 });
         tabLayoutMediator.attach();
+
+//        currentCountPages = Objects.requireNonNull(pager.getAdapter()).getItemCount();
+//        if (adapter.getItemCount() != currentCountPages) {
+//            currentCountPages = adapter.getItemCount();
+//            tabPosition = currentCountPages - 1;
+//        }
+
+        tabLayout.selectTab(tabLayout.getTabAt(tabPosition));
     }
 
     public void addList(View view) {
+        tabPosition = tabLayout.getSelectedTabPosition();
         Intent intent = new Intent(getApplicationContext(), AddEditTaskListActivity.class);
         startActivity(intent);
     }
 
+    public void favoriteTasks(View view) {
+        tabPosition = tabLayout.getSelectedTabPosition();
+        Intent intent = new Intent(getApplicationContext(), FavoriteTasksActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putInt(KEY_CURRENT_TAB_POSITION, tabPosition);
+        savedInstanceState.putInt(KEY_COUNT_PAGES, currentCountPages);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        tabPosition = savedInstanceState.getInt(KEY_CURRENT_TAB_POSITION);
+        currentCountPages = savedInstanceState.getInt(KEY_COUNT_PAGES);
+        updateViewPager();
+    }
 }

@@ -34,7 +34,15 @@
                     app:iconSize="35dp"
                     app:iconTint="@color/white"
                     android:onClick="back"/>
-
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="60dp"
+                    android:text="Создание списка"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,51 +61,52 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Создание списка"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:orientation="vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textColorHint="@color/white"
-            android:hint="Название списка"
-            app:boxStrokeColor="@color/purple_700"
-            app:hintTextColor="@color/white"
-            app:boxBackgroundColor="#19FFFFFF">
 
-            <EditText
-                android:id="@+id/editText"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="@color/white"/>
+                android:layout_margin="10dp"
+                android:textColorHint="@color/white"
+                android:hint="Название списка"
+                app:boxStrokeColor="@color/purple_700"
+                app:hintTextColor="@color/white"
+                app:boxBackgroundColor="#19FFFFFF">
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:textColor="@color/white"/>
 
 
-        </com.google.android.material.textfield.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/button_deleteList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:stateListAnimator="@null"
-            android:text="Удалить"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            app:backgroundTint="#B71C1C"
-            app:icon="@drawable/delete"
-            app:iconSize="35dp"
-            app:iconTint="@color/white"
-            android:onClick="delete"/>
-    </LinearLayout>
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/button_deleteList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:stateListAnimator="@null"
+                android:text="Удалить"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:backgroundTint="#B71C1C"
+                app:icon="@drawable/delete"
+                app:iconSize="35dp"
+                app:iconTint="@color/white"
+                android:onClick="delete"/>
+
+        </LinearLayout>
+       </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

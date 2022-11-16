@@ -18,29 +18,30 @@ import com.example.todolist.entities.TaskList;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TasksFragment extends Fragment {
+
+    private final static String KEY_CONTEXT = "keyContext";
+    private final static String KEY_TASKS= "keyTasks";
+    private final static String KEY_TASK_LIST= "keyTaskList";
+    private final static String KEY_RECYCLER_VIEW= "keyRecyclerView";
+    private final static String KEY_LINEAR_LAYOUT= "keyLinearLayout";
+
     private Context context;
     private List<Task> tasks = new ArrayList<>();
-    private final Optional<TaskList> taskList;
+    private Optional<TaskList> taskList = Optional.empty();
 
     private RecyclerView recyclerView;
     private LinearLayout linearLayout_noTasks;
 
-    public TasksFragment(TaskList taskList) {
-        this.taskList = Optional.of(taskList);
-    }
-
-    public TasksFragment() {
-        this.taskList = Optional.empty();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        taskList = getArguments() != null ? Optional.of(getArguments().getParcelable("taskList"))  : Optional.empty();
     }
 
     @Nullable
@@ -54,13 +55,10 @@ public class TasksFragment extends Fragment {
 
         ExtendedFloatingActionButton button_addTask = view.findViewById(R.id.button_addTask);
 
-        button_addTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTask();
-            }
-        });
-
+        button_addTask.setOnClickListener(v -> addTask());
+        if (savedInstanceState != null) {
+            taskList = Optional.of(savedInstanceState.getParcelable(KEY_TASK_LIST)) ;
+        }
         return view;
     }
 
@@ -89,7 +87,26 @@ public class TasksFragment extends Fragment {
     }
 
     public void addTask() {
-        Intent intent = new Intent(context, AddEditTaskActivity.class);
-        startActivity(intent);
+        if (taskList.isPresent()){
+            Intent intent = new Intent(context, AddEditTaskActivity.class);
+            intent.putExtra("taskList", taskList.get());
+            startActivity(intent);
+        }
+
+    }
+
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        taskList.ifPresent(list -> savedInstanceState.putParcelable(KEY_TASK_LIST, list));
+
+    }
+
+    public void sortToAbc(){
+        tasks.sort(new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+        });
     }
 }

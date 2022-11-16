@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.todolist.Observable;
+import com.example.todolist.Observer;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,9 +17,11 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class Task implements Parcelable {
+public class Task implements Parcelable, Observable {
 
     private static final int NULL_ELEMENT = 0;
     private static final int NONNULL_ELEMENT = 1;
@@ -25,12 +29,13 @@ public class Task implements Parcelable {
     private long id;
     private long listId;
     private String title;
+    private final List<Observer> observers = new ArrayList<>();
 
     private Optional<String> text;
 
     private Optional<LocalDate> endDate;
 
-    private  Optional<LocalDateTime> dateWhenDone;
+    private Optional<LocalDateTime> dateWhenDone;
 
     private boolean isCompleted;
     private boolean isTagged;
@@ -60,6 +65,7 @@ public class Task implements Parcelable {
         this.title = title;
         this.text = text;
         this.endDate = endDate;
+        this.dateWhenDone = dateWhenDone;
         this.isCompleted = isCompleted;
         this.isTagged = isTagged;
     }
@@ -137,12 +143,19 @@ public class Task implements Parcelable {
         return isCompleted;
     }
 
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
     public boolean isTagged() {
         return isTagged;
     }
 
     public void setTagged(boolean tagged) {
-        isTagged = tagged;
+        if (isTagged != tagged){
+            isTagged = tagged;
+            notifyObservers();
+        }
     }
 
     public Optional<LocalDateTime> getDateWhenDone() {
@@ -168,29 +181,43 @@ public class Task implements Parcelable {
         parcel.writeBoolean(isTagged);
 
 
-        if (text.isPresent()){
+        if (text.isPresent()) {
             parcel.writeInt(NONNULL_ELEMENT);
             parcel.writeString(text.get());
-        }
-        else{
+        } else {
             parcel.writeInt(NULL_ELEMENT);
         }
 
-        if (endDate.isPresent()){
+        if (endDate.isPresent()) {
             parcel.writeInt(NONNULL_ELEMENT);
             parcel.writeSerializable(endDate.get());
-        }
-        else{
+        } else {
             parcel.writeInt(NULL_ELEMENT);
         }
 
-        if (dateWhenDone.isPresent()){
+        if (dateWhenDone.isPresent()) {
             parcel.writeInt(NONNULL_ELEMENT);
             parcel.writeSerializable(dateWhenDone.get());
-        }
-        else{
+        } else {
             parcel.writeInt(NULL_ELEMENT);
         }
 
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer: observers) {
+            observer.update(this);
+        }
     }
 }

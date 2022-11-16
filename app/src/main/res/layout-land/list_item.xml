@@ -27,20 +27,20 @@
 
             <TextView
                 android:id="@+id/textView_title"
-                android:layout_width="290dp"
+                android:layout_width="620dp"
                 android:layout_height="wrap_content"
                 android:text="Задача: "
                 android:textSize="18sp"
                 android:textColor="@color/white"/>
 
-                <TextView
-                    android:id="@+id/textView_endDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Выполнить до:"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/textView_endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Выполнить до:"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
         </LinearLayout>
 
 

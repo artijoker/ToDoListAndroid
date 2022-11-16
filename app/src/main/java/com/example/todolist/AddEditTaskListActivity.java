@@ -1,32 +1,35 @@
 package com.example.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.todolist.entities.TaskList;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
-import java.util.List;
 import java.util.Optional;
 
 public class AddEditTaskListActivity extends AppCompatActivity {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final static String KEY_EDIT_TEXT = "keyEditText";
+    private final static String KEY_BUTTON_DELETE = "keyButtonDelete";
+    private final static String KEY_TEXT_VIEW = "keyTextView";
+    private final static String KEY_TASK_LIST = "keyTaskList";
 
     private DatabaseAdapter dbAdapter;
-    private Optional<TaskList>  list;
+    private Optional<TaskList> list;
 
     private EditText editText;
+    private ExtendedFloatingActionButton buttonDelete;
+    private TextView textView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,8 @@ public class AddEditTaskListActivity extends AppCompatActivity {
         dbAdapter = new DatabaseAdapter(this);
         editText = findViewById(R.id.editText);
 
-        TextView textView = findViewById(R.id.textView);
-        ExtendedFloatingActionButton buttonDelete = findViewById(R.id.buttonDelete);
+        textView = findViewById(R.id.textView);
+        buttonDelete = findViewById(R.id.button_deleteList);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -73,25 +76,57 @@ public class AddEditTaskListActivity extends AppCompatActivity {
             dbAdapter.addTaskList(new TaskList(name));
         }
         dbAdapter.close();
-        goMainActivity();
+        goBack();
     }
 
     public void delete(View view) {
-        if (list.isPresent()){
-            dbAdapter.open();
-            dbAdapter.deleteTaskList(list.get().getId());
-            dbAdapter.close();
-            goMainActivity();
+        if (list.isPresent()) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Удалить этот список?")
+                    .setMessage("Все задачи в этом списке будут удалены без возможности востановления")
+                    .setNegativeButton("Отмена", (dialog, which) -> {
+                        dialog.cancel();
+                    })
+                    .setPositiveButton("Удалить", (dialog, which) -> {
+                        dbAdapter.open();
+                        dbAdapter.deleteTaskList(list.get().getId());
+                        dbAdapter.close();
+                        goBack();
+                    })
+                    .show();
         }
     }
 
     public void back(View view) {
-        goMainActivity();
+        goBack();
     }
 
-    private void goMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+    private void goBack() {
+        finish();
+    }
+
+
+    @Override
+
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putString(KEY_TEXT_VIEW, textView.getText().toString());
+        savedInstanceState.putString(KEY_EDIT_TEXT, editText.getText().toString());
+        savedInstanceState.putInt(KEY_BUTTON_DELETE, buttonDelete.getVisibility());
+        list.ifPresent(taskList -> savedInstanceState.putParcelable(KEY_TASK_LIST, taskList));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        textView.setText(savedInstanceState.getString(KEY_TEXT_VIEW));
+        editText.setText(savedInstanceState.getString(KEY_EDIT_TEXT));
+        buttonDelete.setVisibility(savedInstanceState.getInt(KEY_BUTTON_DELETE));
+
+        TaskList possiblyTaskList = savedInstanceState.getParcelable(KEY_TASK_LIST);
+        list = possiblyTaskList != null ? Optional.of(possiblyTaskList) : Optional.empty();
+
     }
 }

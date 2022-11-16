@@ -108,12 +108,18 @@ public class DatabaseAdapter {
 
         if (task.getText().isPresent())
             values.put(DatabaseHelper.COLUMN_TEXT, task.getText().get());
+        else
+            values.putNull(DatabaseHelper.COLUMN_TEXT);
 
         if (task.getEndDate().isPresent())
             values.put(DatabaseHelper.COLUMN_END_DATE, task.getEndDate().get().toString());
+        else
+            values.putNull(DatabaseHelper.COLUMN_END_DATE);
 
         if (task.getDateWhenDone().isPresent())
-            values.put(DatabaseHelper.COLUMN_END_DATE, task.getDateWhenDone().get().toString());
+            values.put(DatabaseHelper.COLUMN_DATE_WHEN_DONE, task.getDateWhenDone().get().toString());
+        else
+            values.putNull(DatabaseHelper.COLUMN_DATE_WHEN_DONE);
 
         values.put(DatabaseHelper.COLUMN_IS_COMPLETED, Boolean.toString(task.isCompleted()));
         values.put(DatabaseHelper.COLUMN_IS_TAGGED, Boolean.toString(task.isTagged()));
@@ -286,7 +292,7 @@ public class DatabaseAdapter {
         if (taskListId == 1)
             return 0;
 
-        deleteTasks(getTasksByListId(taskListId));
+        //deleteTasks(getTasksByListId(taskListId));
         String whereClause = "_id = ?";
         String[] whereArgs = new String[]{String.valueOf(taskListId)};
         return database.delete(DatabaseHelper.TABLE_TASK_LISTS, whereClause, whereArgs);

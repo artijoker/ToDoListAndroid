@@ -54,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         + COLUMN_IS_TAGGED + " TEXT NOT NULL,  "
                         + COLUMN_LIST_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + COLUMN_LIST_ID + ") " +
-                        "REFERENCES " + TABLE_TASK_LISTS + " (" + COLUMN_LIST_ID + " ) ON UPDATE CASCADE ON DELETE CASCADE"
+                        "REFERENCES " + TABLE_TASK_LISTS + " (" + COLUMN_ID + " ) ON DELETE CASCADE"
                         + ");"
         );
 
@@ -64,7 +64,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
     }
-
+    @Override
+    public void onOpen(SQLiteDatabase db){
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys=ON");
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }

@@ -5,19 +5,10 @@
     tools:context=".activities.BaseActivity">
     <item
         android:id="@+id/favorites"
-        android:title="Избранное">
-    </item>
+        android:title="Избранное"/>
     <item
         android:id="@+id/add"
         android:title="Добавить новый список" />
-    <item
-        android:title="Порядок сортировки">
-        <menu>
-            <item android:title="По дате" />
-            <item android:title="По алфавиту" />
-        </menu>
-
-    </item>
 
     <item
         android:id="@+id/rename"

@@ -18,6 +18,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
         this.fragments = fragments;
     }
 
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -29,4 +30,5 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return fragments.size();
     }
+
 }

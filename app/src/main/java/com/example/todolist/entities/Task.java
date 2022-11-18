@@ -4,16 +4,10 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.example.todolist.Observable;
-import com.example.todolist.Observer;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.example.todolist.observer.TaskObservable;
+import com.example.todolist.observer.TaskObserver;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Task implements Parcelable, Observable {
+public class Task implements Parcelable, TaskObservable {
 
     private static final int NULL_ELEMENT = 0;
     private static final int NONNULL_ELEMENT = 1;
@@ -29,7 +23,7 @@ public class Task implements Parcelable, Observable {
     private long id;
     private long listId;
     private String title;
-    private final List<Observer> observers = new ArrayList<>();
+    private final List<TaskObserver> taskObservers = new ArrayList<>();
 
     private Optional<String> text;
 
@@ -205,19 +199,19 @@ public class Task implements Parcelable, Observable {
     }
 
     @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
+    public void addObserver(TaskObserver taskObserver) {
+        taskObservers.add(taskObserver);
     }
 
     @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
+    public void removeObserver(TaskObserver taskObserver) {
+        taskObservers.remove(taskObserver);
     }
 
     @Override
     public void notifyObservers() {
-        for (Observer observer: observers) {
-            observer.update(this);
+        for (TaskObserver taskObserver : taskObservers) {
+            taskObserver.update(this);
         }
     }
 }

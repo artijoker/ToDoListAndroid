@@ -256,7 +256,29 @@ public class AddEditTaskActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        String title = editText_taskTitle.getText().toString().trim();
+        String text = editText_taskText.getText().toString().trim();
+        if (task.isPresent()) {
+            DatabaseAdapter dbAdapter =new DatabaseAdapter(this);
+            dbAdapter.open();
 
+            Task currentTask = task.get();
+            if (!title.isEmpty())
+                currentTask.setTitle(title);
+            if (!text.isEmpty())
+                currentTask.setText(Optional.of(text));
+
+            currentTask.setEndDate(endDate);
+            currentTask.setTagged(checkBox_taggedTask.isChecked());
+            currentTask.setCompleted(checkBox_completedTask.isChecked());
+            dbAdapter.updateTask(task.get());
+
+            dbAdapter.close();
+        }
+        finish();
+    }
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);

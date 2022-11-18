@@ -19,7 +19,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private int currentCountPages = 0;
     private ViewPager2 pager;
     private TabLayout tabLayout;
+
+    private List<UpdateFragment> updateFragments = new ArrayList<>();
 
     private DatabaseAdapter dbAdapter;
 
@@ -101,9 +102,12 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             }
-//            else if (id == R.id.sortToAbc) {
-//                return true;
-//            }
+            else if (id == R.id.favorites) {
+
+                Intent intent = new Intent(getApplicationContext(), FavoriteTasksActivity.class);
+                startActivity(intent);
+            }
+
             return false;
         });
 
@@ -125,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Pair<Fragment, TaskList>> createFragments(List<TaskList> lists) {
 
         List<Pair<Fragment, TaskList>> fragments = new ArrayList<>();
+
         for (TaskList list : lists) {
 
             Bundle args = new Bundle();
@@ -132,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             TasksFragment fragment = new TasksFragment();
             fragment.setArguments(args);
             fragments.add(new Pair<>(fragment, list));
+            updateFragments.add(fragment);
         }
         return fragments;
     }
@@ -154,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
                     tab.setTag(fragments.get(position).second);
                 });
         tabLayoutMediator.attach();
-
 //        currentCountPages = Objects.requireNonNull(pager.getAdapter()).getItemCount();
 //        if (adapter.getItemCount() != currentCountPages) {
 //            currentCountPages = adapter.getItemCount();
@@ -165,13 +170,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addList(View view) {
-        tabPosition = tabLayout.getSelectedTabPosition();
         Intent intent = new Intent(getApplicationContext(), AddEditTaskListActivity.class);
         startActivity(intent);
     }
 
     public void favoriteTasks(View view) {
-        tabPosition = tabLayout.getSelectedTabPosition();
         Intent intent = new Intent(getApplicationContext(), FavoriteTasksActivity.class);
         startActivity(intent);
     }

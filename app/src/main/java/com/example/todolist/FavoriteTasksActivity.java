@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.example.todolist.entities.Task;
+import com.example.todolist.observer.TaskObserver;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoriteTasksActivity extends AppCompatActivity implements Observer {
+public class FavoriteTasksActivity extends AppCompatActivity implements TaskObserver {
 
     private DatabaseAdapter dbAdapter;
     private List<Task> tasks = new ArrayList<>();

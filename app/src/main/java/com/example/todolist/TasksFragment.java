@@ -3,10 +3,13 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,16 +23,11 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-public class TasksFragment extends Fragment {
+public class TasksFragment extends Fragment implements UpdateFragment {
 
-    private final static String KEY_CONTEXT = "keyContext";
-    private final static String KEY_TASKS= "keyTasks";
-    private final static String KEY_TASK_LIST= "keyTaskList";
-    private final static String KEY_RECYCLER_VIEW= "keyRecyclerView";
-    private final static String KEY_LINEAR_LAYOUT= "keyLinearLayout";
+    private final static String KEY_TASK_LIST = "keyTaskList";
 
     private Context context;
     private List<Task> tasks = new ArrayList<>();
@@ -41,14 +39,14 @@ public class TasksFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        taskList = getArguments() != null ? Optional.of(getArguments().getParcelable("taskList"))  : Optional.empty();
+        taskList = getArguments() != null ? Optional.of(getArguments().getParcelable("taskList")) : Optional.empty();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context = getActivity();
 
+        context = getActivity();
         View view = inflater.inflate(R.layout.tasks_fragment_page, container, false);
         recyclerView = view.findViewById(R.id.taskList);
         linearLayout_noTasks = view.findViewById(R.id.linearLayout_noTasks);
@@ -57,8 +55,9 @@ public class TasksFragment extends Fragment {
 
         button_addTask.setOnClickListener(v -> addTask());
         if (savedInstanceState != null) {
-            taskList = Optional.of(savedInstanceState.getParcelable(KEY_TASK_LIST)) ;
+            taskList = Optional.of(savedInstanceState.getParcelable(KEY_TASK_LIST));
         }
+
         return view;
     }
 
@@ -70,24 +69,24 @@ public class TasksFragment extends Fragment {
             DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
             dbAdapter.open();
             tasks = dbAdapter.getTasksByListId(taskList.get().getId());
-            if (tasks.size() > 0){
+            if (tasks.size() > 0) {
                 recyclerView.setVisibility(View.VISIBLE);
                 linearLayout_noTasks.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 recyclerView.setVisibility(View.GONE);
                 linearLayout_noTasks.setVisibility(View.VISIBLE);
             }
 
             recyclerView.setAdapter(new RecyclerViewStateAdapter(context, tasks));
             dbAdapter.close();
-
-
+        } else {
+            recyclerView.setVisibility(View.GONE);
+            linearLayout_noTasks.setVisibility(View.VISIBLE);
         }
     }
 
     public void addTask() {
-        if (taskList.isPresent()){
+        if (taskList.isPresent()) {
             Intent intent = new Intent(context, AddEditTaskActivity.class);
             intent.putExtra("taskList", taskList.get());
             startActivity(intent);
@@ -98,15 +97,27 @@ public class TasksFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         taskList.ifPresent(list -> savedInstanceState.putParcelable(KEY_TASK_LIST, list));
-
     }
 
-    public void sortToAbc(){
-        tasks.sort(new Comparator<Task>() {
-            @Override
-            public int compare(Task o1, Task o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
+
+    @Override
+    public void sortToAbc() {
+        tasks.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+        recyclerView.setAdapter(new RecyclerViewStateAdapter(context, tasks));
+    }
+
+    @Override
+    public void sortToDate() {
+        tasks.sort((o1, o2) -> {
+            if (o1.getEndDate().isPresent() && o2.getEndDate().isPresent())
+                return o1.getEndDate().get().compareTo(o2.getEndDate().get());
+            else if (o1.getEndDate().isPresent() && !o2.getEndDate().isPresent())
+                return 1;
+            else if (!o1.getEndDate().isPresent() && o2.getEndDate().isPresent())
+                return -1;
+            else
+                return 0;
         });
+        recyclerView.setAdapter(new RecyclerViewStateAdapter(context, tasks));
     }
 }
